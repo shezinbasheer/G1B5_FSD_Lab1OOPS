@@ -1,0 +1,56 @@
+4
+select CUS_GENDER,count(*)
+from customer , Orders 
+where customer.cus_id=orders.Cus_id 
+and orders.Ord_amount >=3000
+group by CUS_GENDER
+
+
+5
+select a.Ord_id, a.Cus_id, a.Ord_Amount , c.Pro_name 
+from orders as a , Supplier_pricing as b ,product as c 
+where 
+a.pricing_id=b.Pricing_id and 
+b.pro_id=c.Pro_id and 
+a.cus_id =2
+
+6
+select  a.Supp_id, b.supp_Name, count(a.pro_id)  from Supplier_pricing as a , Supplier as b 
+where a.supp_id=b.supp_id 
+group by a.supp_id, b.supp_Name having count(pro_id) > 1
+
+7
+
+SELECT Cat_name , Min(c.supp_price) FROM CATEGORY a , Product b , supplier_pricing  c 
+where a.cat_id = b.cat_id and 
+b.Pro_id =c.Pro_id 
+group by a.cat_id 
+
+8.
+
+select Pro_id, Pro_name,ORD_DATE from product 
+join Supplier_pricing using (pro_id)
+join Orders using (pricing_id)
+where ORD_DATE >'2021-10-05'
+
+9
+
+select cus_name , Cus_Gender from customer where cus_name like 'A%' or cus_name like '%A'
+
+10
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `supplier_ratings`()
+BEGIN
+    select d.supp_id, avg(a.rat_RATstars) rating, 
+CASE            WHEN AVG(a.rat_RATstars) = 5 THEN 'Excellent Service'
+            WHEN AVG(a.rat_RATstars) > 4 THEN 'Good Service'
+            WHEN AVG(a.rat_RATstars) > 2 THEN 'Average Service'
+            ELSE 'Poor Service'
+        END AS type_of_service,
+d.supp_name  from rating a , orders b ,supplier_Pricing  c , Supplier d 
+where a.ord_id = b.Ord_id and 
+      b.pricing_id=c.pricing_Id and 
+      c.supp_id=d.supp_id
+ group by d.supp_name,d.supp_id;
+END
+
